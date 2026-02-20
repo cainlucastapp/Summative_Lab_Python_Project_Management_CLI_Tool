@@ -14,8 +14,6 @@ class User:
         else:
             self._id = user_id
             
-
-        
         
     # Serialization
     def to_dict(self):
