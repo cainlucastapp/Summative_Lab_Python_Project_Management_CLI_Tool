@@ -1,5 +1,7 @@
 # main.py
+# Run with pipenv run python main.py
 
+#Requires
 from lib.utils import storage
 from lib.controllers.users_controller import UsersController
 
@@ -20,9 +22,15 @@ def main():
     #user = users_controller.add_user({ "name": "George", "email": "george@email.com"})
     
     with UsersController(users_file) as users_controller:
-        user = users_controller.add_user({ "name": "Bobo", "email": "bobo@email.com"})
+        #user = users_controller.add_user({ "name": "Bobo", "email": "bobo@email.com"})
+        #users_controller.list_users()
+        #users_controller.update_user({"id": "87cc7736-2456-4390-b24b-5988ed3df6bd","name": "Bobby","email": "bobby@email.com"})
+        #users_controller.get_user({"id": "87cc7736-2456-4390-b24b-5988ed3df6bd"})
+        #users_controller.delete_user({"id": "87cc7736-2456-4390-b24b-5988ed3df6bd"})
+        
+        users_controller.list_users()
 
-    print(user)
+    #print(user)
     
     #storage.save_data(users_file, [ user.to_dict() for user in users_controller.data ])
     
