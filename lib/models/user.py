@@ -2,16 +2,14 @@
 
 # One to many relationship with projects
 
-#Requires
-import uuid
+# Requires
+from lib.models.person import Person
 
-class User:
+
+class User(Person):
     def __init__(self, name, email, user_id=None):
-        self.name = name
-        self.email = email
-        if not user_id:
-            self._id = str(uuid.uuid4())
-        else:
+        super().__init__(name, email)
+        if user_id:
             self._id = user_id
             
         
