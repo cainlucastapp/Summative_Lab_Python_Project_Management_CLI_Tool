@@ -15,13 +15,16 @@ def main():
     #print(f"Project file: {project_file}")
     #print(f"Task file: {task_file}")
     
-    users_controller = UsersController(users_file)
-    users_controller.data = storage.load_data(users_file)
-    user = users_controller.add_user({ "name": "George", "email": "george@email.com"})
+    #users_controller = UsersController(users_file)
+    #users_controller.data = storage.load_data(users_file)
+    #user = users_controller.add_user({ "name": "George", "email": "george@email.com"})
     
+    with UsersController(users_file) as users_controller:
+        user = users_controller.add_user({ "name": "Bobo", "email": "bobo@email.com"})
+
     print(user)
     
-    storage.save_data(users_file, [ user.to_dict() for user in users_controller.data ])
+    #storage.save_data(users_file, [ user.to_dict() for user in users_controller.data ])
     
     print("[END]")
 
