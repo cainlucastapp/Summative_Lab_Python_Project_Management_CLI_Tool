@@ -1,5 +1,5 @@
 {
-    "user_file": "data/user_data.json",
-    "project_file": "data/project_data.json",
-    "task_file": "data/task_data.json"
+    "user_file": "data/users.json",
+    "project_file": "data/projects.json",
+    "task_file": "data/tasks.json"
 }
