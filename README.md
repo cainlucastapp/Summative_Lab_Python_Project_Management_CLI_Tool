@@ -43,7 +43,7 @@ python main.py delete-project --id "PROJECT_ID"
 ### Task Commands
 ```bash
 # Add a new task
-python main.py add-task --project-id "PROJECT_ID" --title "Task Title" --assigned-to-id "USER_ID"
+python main.py add-task --project-id "PROJECT_ID" --title "Task Title"
 
 # List all tasks
 python main.py list-tasks
@@ -52,7 +52,7 @@ python main.py list-tasks
 python main.py get-task --id "TASK_ID"
 
 # Update task
-python main.py update-task --id "TASK_ID" --title "New Title" --assigned-to-id "NEW_USER_ID" --status "completed"
+python main.py update-task --id "TASK_ID" --title "New Title" --status "completed"
 
 # Delete task
 python main.py delete-task --id "TASK_ID"

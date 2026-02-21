@@ -93,30 +93,27 @@ def main():
                     case "add-task":
                         tasks_controller.add_task({
                             "project_id": args.project_id,
-                            "title": args.title,
-                            "assigned_to_id": args.assigned_to_id
-                        }, users_controller, projects_controller)
-                    
+                            "title": args.title
+                        }, projects_controller)
+
                     # List tasks
                     case "list-tasks":
-                        tasks_controller.list_tasks(users_controller, projects_controller)
-                    
+                        tasks_controller.list_tasks(projects_controller)
+
                     # Get task
                     case "get-task":
-                        tasks_controller.get_task({"id": args.id}, users_controller, projects_controller)
-                    
+                        tasks_controller.get_task({"id": args.id}, projects_controller)
+
                     # Update task
                     case "update-task":
                         update_args = {"id": args.id}
                         if args.title:
                             update_args["title"] = args.title
-                        if args.assigned_to_id:
-                            update_args["assigned_to_id"] = args.assigned_to_id
                         if args.status:
                             update_args["status"] = args.status
                         tasks_controller.update_task(update_args)
-                    
-                    # Delete task
+
+                    # Delete task (no changes needed)
                     case "delete-task":
                         tasks_controller.delete_task({"id": args.id})
                     
