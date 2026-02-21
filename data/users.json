@@ -3,5 +3,10 @@
     "id": "92b50a86-d644-4018-b5ae-ab194d6f0480",
     "name": "Bobo",
     "email": "bobo@email.com"
+  },
+  {
+    "id": "208c854b-aaf1-418a-93d6-074f8153c623",
+    "name": "Alice",
+    "email": "alice@example.com"
   }
 ]
