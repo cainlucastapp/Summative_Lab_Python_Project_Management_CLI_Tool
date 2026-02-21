@@ -22,25 +22,49 @@ class TasksController:
         storage.save_data(self.file_path, [task.to_dict() for task in self.data])
     
 
+    # Validate title
+    @staticmethod
+    def _validate_title(title):
+        # Check not empty
+        if not title.strip():
+            print("Error: Title cannot be empty.")
+            return False
+        
+        return True
+
+
+    # Validate status
+    @staticmethod
+    def _validate_status(status):
+        # Check not empty
+        if not status.strip():
+            print("Error: Status cannot be empty.")
+            return False
+        
+        # Check valid values
+        if status.lower() not in ["active", "completed"]:
+            print("Error: Status must be 'active' or 'completed'.")
+            return False
+        
+        return True
+
+
     # Add task
-    def add_task(self, args, users_controller, projects_controller):
+    def add_task(self, args, projects_controller):
+        # Validate title
+        if not self._validate_title(args["title"]):
+            return None
+        
         # Check if project exists
         project = next((p for p in projects_controller.data if p._id == args["project_id"]), None)
         if not project:
             print(f"Error: Project with ID {args['project_id']} not found.")
             return None
         
-        # Check if user exists
-        user = next((u for u in users_controller.data if u._id == args["assigned_to_id"]), None)
-        if not user:
-            print(f"Error: User with ID {args['assigned_to_id']} not found.")
-            return None
-        
         # Create task
         task = Task(
             project_id=args["project_id"],
-            title=args["title"],
-            assigned_to_id=args["assigned_to_id"]
+            title=args["title"]
         )
         self.data.append(task)
         print(f"Task '{task.title}' added successfully with ID: {task._id}.")
@@ -48,7 +72,7 @@ class TasksController:
 
 
     # Get task by ID
-    def get_task(self, args, users_controller, projects_controller):
+    def get_task(self, args, projects_controller):
         task = next((t for t in self.data if t._id == args["id"]), None)
         
         # Task not found
@@ -60,27 +84,24 @@ class TasksController:
         project = next((p for p in projects_controller.data if p._id == task.project_id), None)
         project_name = project.title if project else "Unknown"
         
-        # Look up assigned user
-        user = next((u for u in users_controller.data if u._id == task.assigned_to_id), None)
-        assigned_to = user.name if user else "Unknown"
-        
         # Task found
-        print(f"ID: {task._id}, Title: {task.title}, Project: {project_name}, Assigned to: {assigned_to}, Status: {task.status}")
+        print(f"ID: {task._id}, Title: {task.title}, Project: {project_name}, Status: {task.status}")
         return task
 
 
     # List tasks
-    def list_tasks(self, users_controller, projects_controller):
+    def list_tasks(self, projects_controller):
+        # Check if there are any tasks
+        if not self.data:
+            print("No tasks found.")
+            return
+        
         for task in self.data:
             # Look up project name
             project = next((p for p in projects_controller.data if p._id == task.project_id), None)
             project_name = project.title if project else "Unknown"
             
-            # Look up assigned user
-            user = next((u for u in users_controller.data if u._id == task.assigned_to_id), None)
-            assigned_to = user.name if user else "Unknown"
-            
-            print(f"ID: {task._id}, Title: {task.title}, Project: {project_name}, Assigned to: {assigned_to}, Status: {task.status}")
+            print(f"ID: {task._id}, Title: {task.title}, Project: {project_name}, Status: {task.status}")
 
 
     # Update task
@@ -91,11 +112,19 @@ class TasksController:
             print(f"Error: Task with ID {args['id']} not found.")
             return None
         
+        # Validate title if updating
+        if "title" in args:
+            if not self._validate_title(args["title"]):
+                return None
+        
+        # Validate status if updating
+        if "status" in args:
+            if not self._validate_status(args["status"]):
+                return None
+        
         # Update fields if provided
         if "title" in args:
             task.title = args["title"]
-        if "assigned_to_id" in args:
-            task.assigned_to_id = args["assigned_to_id"]
         if "status" in args:
             task.status = args["status"]
         

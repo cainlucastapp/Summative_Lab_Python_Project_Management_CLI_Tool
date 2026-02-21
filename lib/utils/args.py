@@ -80,7 +80,6 @@ def setup_task_parsers(subparsers):
     parser_add_task = subparsers.add_parser("add-task", help="Add a new task")
     parser_add_task.add_argument("--project-id", required=True, help="Project ID")
     parser_add_task.add_argument("--title", required=True, help="Task title")
-    parser_add_task.add_argument("--assigned-to-id", required=True, help="User ID to assign task to")
     
     # List tasks
     parser_list_tasks = subparsers.add_parser("list-tasks", help="List all tasks")
@@ -93,7 +92,6 @@ def setup_task_parsers(subparsers):
     parser_update_task = subparsers.add_parser("update-task", help="Update an existing task")
     parser_update_task.add_argument("--id", required=True, help="Task ID")
     parser_update_task.add_argument("--title", help="New task title")
-    parser_update_task.add_argument("--assigned-to-id", help="New user ID to assign task to")
     parser_update_task.add_argument("--status", help="New status (active/completed)")
     
     # Delete task
