@@ -1,8 +1,9 @@
 # lib/controllers/users_controller.py
 
-#Requires
+# Requires
 from lib.models.user import User
 from lib.utils import storage
+import re
 
 
 class UsersController:
@@ -22,8 +23,53 @@ class UsersController:
         storage.save_data(self.file_path, [user.to_dict() for user in self.data])
     
 
+    # Validate name
+    @staticmethod
+    def _validate_name(name):
+        # Check not empty
+        if not name.strip():
+            print("Error: Name cannot be empty.")
+            return False
+        
+        # Check format: letters, spaces, periods, hyphens, apostrophes only
+        if not re.fullmatch(r"[A-Za-z][A-Za-z\s'\.\-]*", name):
+            print("Error: Name can only contain letters, spaces, periods, hyphens, and apostrophes.")
+            return False
+        
+        # Check no numbers
+        if any(char.isdigit() for char in name):
+            print("Error: Name cannot contain numbers.")
+            return False
+        
+        return True
+
+
+    # Validate email
+    @staticmethod
+    def _validate_email(email):
+        # Check not empty
+        if not email.strip():
+            print("Error: Email cannot be empty.")
+            return False
+        
+        # Check format
+        if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+            print("Error: Invalid email format.")
+            return False
+        
+        return True
+
+
     # Add user
     def add_user(self, args):
+        # Validate name
+        if not self._validate_name(args["name"]):
+            return None
+        
+        # Validate email
+        if not self._validate_email(args["email"]):
+            return None
+        
         # Check for duplicate email
         if any(u.email == args["email"] for u in self.data):
             print(f"Error: User with email {args['email']} already exists.")
@@ -52,6 +98,11 @@ class UsersController:
 
     # List users
     def list_users(self):
+        # Check if there are any users
+        if not self.data:
+            print("No users found.")
+            return
+        
         for user in self.data:
             print(f"ID: {user._id}, Name: {user.name}, Email: {user.email}")
 
@@ -64,11 +115,21 @@ class UsersController:
             print(f"Error: User with ID {args['id']} not found.")
             return None
         
-        # Check for duplicate email if updating email
-        if "email" in args and args["email"] != user.email:
-            if any(u.email == args["email"] for u in self.data):
-                print(f"Error: Email {args['email']} is already in use.")
+        # Validate name if updating
+        if "name" in args:
+            if not self._validate_name(args["name"]):
                 return None
+        
+        # Validate email if updating
+        if "email" in args:
+            if not self._validate_email(args["email"]):
+                return None
+            
+            # Check for duplicate email if updating email
+            if args["email"] != user.email:
+                if any(u.email == args["email"] for u in self.data):
+                    print(f"Error: Email {args['email']} is already in use.")
+                    return None
         
         # Update fields if provided
         if "name" in args:
