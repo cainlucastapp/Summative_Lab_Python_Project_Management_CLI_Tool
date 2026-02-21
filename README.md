@@ -57,3 +57,32 @@ python main.py update-task --id "TASK_ID" --title "New Title" --status "complete
 # Delete task
 python main.py delete-task --id "TASK_ID"
 ```
+
+
+## Testing Commands
+```bash
+# Run all tests with verbose output
+python -m pytest -v
+
+# Run all model tests
+python -m pytest tests/test_models.py -v
+
+# Run all user controller tests
+python -m pytest tests/test_users_controller.py -v
+
+# Run all project controller tests
+python -m pytest tests/test_projects_controller.py -v
+
+# Run all task controller tests
+python -m pytest tests/test_tasks_controller.py -v
+
+# Run tests with coverage report
+python -m pytest --cov
+
+# Run tests and show print statements
+python -m pytest -v -s
+
+# Run tests and stop at first failure
+python -m pytest -x
+
+```

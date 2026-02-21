@@ -36,11 +36,6 @@ class UsersController:
             print("Error: Name can only contain letters, spaces, periods, hyphens, and apostrophes.")
             return False
         
-        # Check no numbers
-        if any(char.isdigit() for char in name):
-            print("Error: Name cannot contain numbers.")
-            return False
-        
         return True
 
 
