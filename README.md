@@ -1,6 +1,52 @@
-# READ ME COMMING SOON
+# Project Management CLI
+
+A command-line interface tool for managing users, projects, and tasks. Built with Python, this CLI tool provides a simple and efficient way to organize project workflows with persistent data storage and rich formatted output.
 
 ## Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd project-management-cli
+```
+
+2. Install dependencies using Pipenv:
+```bash
+python -m pipenv install
+```
+
+3. Activate the virtual environment:
+```bash
+python -m pipenv shell
+```
+
+4. Run the application:
+```bash
+python main.py --help
+```
+
+## Tech Stack
+
+- **Python 3.13** - Core programming language
+- **Rich** - Terminal formatting and colored output
+- **pytest** - Testing framework
+- **JSON** - Data persistence
+- **argparse** - Command-line argument parsing
+- **uuid** - Unique ID generation
+
+
+## Project Structure
+```
+project-management-cli/
+├── lib/
+│   ├── models/          # Data models (User, Project, Task)
+│   ├── controllers/     # Business logic and CRUD operations
+│   └── utils/           # Utilities (storage, args, helpers)
+├── tests/               # Test suite
+├── data/                # JSON data storage
+├── main.py              # Entry point
+└── Pipfile              # Dependency management
+```
 
 ## Available Commands
 
@@ -58,7 +104,6 @@ python main.py update-task --id "TASK_ID" --title "New Title" --status "complete
 python main.py delete-task --id "TASK_ID"
 ```
 
-
 ## Testing Commands
 ```bash
 # Run all tests with verbose output
@@ -75,14 +120,4 @@ python -m pytest tests/test_projects_controller.py -v
 
 # Run all task controller tests
 python -m pytest tests/test_tasks_controller.py -v
-
-# Run tests with coverage report
-python -m pytest --cov
-
-# Run tests and show print statements
-python -m pytest -v -s
-
-# Run tests and stop at first failure
-python -m pytest -x
-
 ```
