@@ -40,7 +40,7 @@ def main():
                     
                     # Get user
                     case "get-user":
-                        users_controller.get_user({"id": args.id})
+                        users_controller.get_user({"id": args.id}, projects_controller, tasks_controller)
                     
                     # Update user
                     case "update-user":
@@ -70,7 +70,7 @@ def main():
                     
                     # Get project
                     case "get-project":
-                        projects_controller.get_project({"id": args.id}, users_controller)
+                        projects_controller.get_project({"id": args.id}, users_controller, tasks_controller)
                     
                     # Update project
                     case "update-project":

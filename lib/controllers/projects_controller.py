@@ -3,7 +3,13 @@
 # Requires
 from lib.models.project import Project
 from lib.utils import storage
+from rich.console import Console
+from rich.table import Table
+from rich import box
 from datetime import datetime
+
+# Console instance
+console = Console()
 
 
 class ProjectsController:
@@ -28,7 +34,7 @@ class ProjectsController:
     def _validate_title(title):
         # Check not empty
         if not title.strip():
-            print("Error: Title cannot be empty.")
+            console.print("[red]✗ Error:[/red] Title cannot be empty.")
             return False
         
         return True
@@ -39,7 +45,7 @@ class ProjectsController:
     def _validate_description(description):
         # Check not empty
         if not description.strip():
-            print("Error: Description cannot be empty.")
+            console.print("[red]✗ Error:[/red] Description cannot be empty.")
             return False
         
         return True
@@ -50,19 +56,19 @@ class ProjectsController:
     def _validate_date(due_date):
         # Check not empty
         if not due_date.strip():
-            print("Error: Due date cannot be empty.")
+            console.print("[red]✗ Error:[/red] Due date cannot be empty.")
             return False
         
         # Check format MM-DD-YYYY
         try:
             parsed_date = datetime.strptime(due_date, "%m-%d-%Y")
         except ValueError:
-            print("Error: Due date must be in MM-DD-YYYY format.")
+            console.print("[red]✗ Error:[/red] Due date must be in MM-DD-YYYY format.")
             return False
         
         # Check date is in the future
         if parsed_date.date() < datetime.today().date():
-            print("Error: Due date must be in the future.")
+            console.print("[red]✗ Error:[/red] Due date must be in the future.")
             return False
         
         return True
@@ -73,12 +79,12 @@ class ProjectsController:
     def _validate_status(status):
         # Check not empty
         if not status.strip():
-            print("Error: Status cannot be empty.")
+            console.print("[red]✗ Error:[/red] Status cannot be empty.")
             return False
         
         # Check valid values
         if status.lower() not in ["active", "completed"]:
-            print("Error: Status must be 'active' or 'completed'.")
+            console.print("[red]✗ Error:[/red] Status must be 'active' or 'completed'.")
             return False
         
         return True
@@ -101,7 +107,7 @@ class ProjectsController:
         # Check if user exists
         user = next((u for u in users_controller.data if u._id == args["assigned_to_id"]), None)
         if not user:
-            print(f"Error: User with ID {args['assigned_to_id']} not found.")
+            console.print(f"[red]✗ Error:[/red] User with ID {args['assigned_to_id']} not found.")
             return None
         
         # Create project
@@ -112,25 +118,64 @@ class ProjectsController:
             due_date=args["due_date"]
         )
         self.data.append(project)
-        print(f"Project '{project.title}' added successfully with ID: {project._id}.")
+        console.print(f"[green]✓ Success:[/green] Project '{project.title}' added successfully with ID: {project._id}.")
         return project
 
-
-    # Get project by ID
-    def get_project(self, args, users_controller):
+    # Get project by ID with owner and tasks
+    def get_project(self, args, users_controller=None, tasks_controller=None):
         project = next((p for p in self.data if p._id == args["id"]), None)
         
         # Project not found
         if not project:
-            print(f"Error: Project with ID {args['id']} not found.")
+            console.print(f"[red]✗ Error:[/red] Project with ID {args['id']} not found.")
             return None
         
         # Look up assigned user
-        user = next((u for u in users_controller.data if u._id == project.assigned_to_id), None)
-        assigned_to = user.name if user else "Unknown"
+        user = None
+        if users_controller:
+            user = next((u for u in users_controller.data if u._id == project.assigned_to_id), None)
         
-        # Project found
-        print(f"ID: {project._id}, Title: {project.title}, Assigned to: {assigned_to}, Status: {project.status}, Due: {project.due_date}")
+        # Format status with color
+        status_color = "orange1" if project.status == "active" else "blue"
+        
+        # Project header
+        console.print(f"\n[bold green]Project: {project.title}[/bold green]")
+        console.print(f"Description: {project.description}")
+        console.print(f"Status: [{status_color}]{project.status}[/{status_color}] | Due: {project.due_date}")
+        console.print(f"Assigned to: {user.name if user else 'Unknown'}")
+        console.print(f"ID: {project._id}\n")
+        console.rule()
+        
+        # If no tasks controller provided, just show project info
+        if not tasks_controller:
+            return project
+        
+        # Find tasks for this project
+        project_tasks = [t for t in tasks_controller.data if t.project_id == project._id]
+        
+        if not project_tasks:
+            console.print("[yellow]⚠ Warning:[/yellow] No tasks found for this project.")
+            return project
+        
+        # Create task table
+        console.print("\n[bold]Tasks:[/bold]\n")
+        task_table = Table(box=box.SIMPLE, show_header=True)
+        task_table.add_column("ID", style="cyan", justify="center")
+        task_table.add_column("Title", style="white")
+        task_table.add_column("Status", justify="center")
+        
+        for task in project_tasks:
+            # Color-code status
+            if task.status == "active":
+                status_display = "[orange1]active[/orange1]"
+            else:
+                status_display = "[blue]completed[/blue]"
+            
+            task_table.add_row(task._id, task.title, status_display)
+        
+        console.print(task_table)
+        console.rule()
+        
         return project
 
 
@@ -138,15 +183,32 @@ class ProjectsController:
     def list_projects(self, users_controller):
         # Check if there are any projects
         if not self.data:
-            print("No projects found.")
+            console.print("[yellow]⚠ Warning:[/yellow] No projects found.")
             return
         
+        # Create table
+        table = Table(title="All Projects", box=box.SIMPLE)
+        table.add_column("ID", style="cyan", justify="center")
+        table.add_column("Title", style="white")
+        table.add_column("Assigned To", style="white")
+        table.add_column("Status", justify="center")
+        table.add_column("Due Date", style="white", justify="center")
+        
+        # Add rows
         for project in self.data:
             # Look up assigned user
             user = next((u for u in users_controller.data if u._id == project.assigned_to_id), None)
             assigned_to = user.name if user else "Unknown"
             
-            print(f"ID: {project._id}, Title: {project.title}, Assigned to: {assigned_to}, Status: {project.status}, Due: {project.due_date}")
+            # Color-code status
+            if project.status == "active":
+                status_display = "[orange1]active[/orange1]"
+            else:
+                status_display = "[blue]completed[/blue]"
+            
+            table.add_row(project._id, project.title, assigned_to, status_display, project.due_date)
+        
+        console.print(table)
 
 
     # Update project
@@ -154,7 +216,7 @@ class ProjectsController:
         project = next((p for p in self.data if p._id == args["id"]), None)
         
         if not project:
-            print(f"Error: Project with ID {args['id']} not found.")
+            console.print(f"[red]✗ Error:[/red] Project with ID {args['id']} not found.")
             return None
         
         # Validate title if updating
@@ -187,7 +249,7 @@ class ProjectsController:
         if "status" in args:
             project.status = args["status"]
         
-        print(f"Project '{project.title}' updated successfully.")
+        console.print(f"[green]✓ Success:[/green] Project '{project.title}' updated successfully.")
         return project
     
 
@@ -197,16 +259,16 @@ class ProjectsController:
         
         # Check if project exists
         if not project:
-            print(f"Error: Project with ID {args['id']} not found.")
+            console.print(f"[red]✗ Error:[/red] Project with ID {args['id']} not found.")
             return None
         
         # Ask for confirmation
         confirm = input(f"Are you sure you want to delete project '{project.title}' (ID: {project._id})? (y/n): ")
         if confirm.lower() != "y":
-            print("Delete cancelled.")
+            console.print("[yellow]⚠ Warning:[/yellow] Delete cancelled.")
             return None
         
         # If confirmed, delete the project
         self.data.remove(project)
-        print(f"Project '{project.title}' deleted successfully.")
+        console.print(f"[green]✓ Success:[/green] Project '{project.title}' deleted successfully.")
         return project
