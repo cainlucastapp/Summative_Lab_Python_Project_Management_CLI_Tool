@@ -33,7 +33,9 @@ class TasksController:
     def _validate_title(title):
         # Check not empty
         if not title.strip():
+            console.print("─" * 60, style="dim")
             console.print("[red]✗ Error:[/red] Title cannot be empty.")
+            console.print("─" * 60, style="dim")
             return False
         
         return True
@@ -44,7 +46,9 @@ class TasksController:
     def _validate_status(status):
         # Check not empty
         if not status.strip():
+            console.print("─" * 60, style="dim")
             console.print("[red]✗ Error:[/red] Status cannot be empty.")
+            console.print("─" * 60, style="dim")
             return False
         
         # Check valid values

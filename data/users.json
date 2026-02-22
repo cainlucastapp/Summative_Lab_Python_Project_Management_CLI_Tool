@@ -1,12 +1,22 @@
 [
   {
-    "id": "92b50a86-d644-4018-b5ae-ab194d6f0480",
-    "name": "Bobo",
-    "email": "bobo@email.com"
+    "id": "616916b7-7e62-48ec-8ea6-7f4f72e529dc",
+    "name": "Conan The Barbarian",
+    "email": "conan@cimmeria.com"
   },
   {
-    "id": "208c854b-aaf1-418a-93d6-074f8153c623",
-    "name": "Alice",
-    "email": "alice@example.com"
+    "id": "2a974b23-6897-4885-bda4-4c46f44d62f2",
+    "name": "George Heeres",
+    "email": "george.heeres@flatironschool.com"
+  },
+  {
+    "id": "082abb75-f928-47ce-8ccb-5a7b50aa5f27",
+    "name": "Test User",
+    "email": "test@example.com"
+  },
+  {
+    "id": "899e3ba5-c71a-43be-baad-0cc4fae9f613",
+    "name": "George Heeres",
+    "email": "george2@flatironschool.com"
   }
 ]
